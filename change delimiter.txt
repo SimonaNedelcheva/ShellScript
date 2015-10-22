@@ -1,0 +1,42 @@
+﻿//Koпирайте файл /etc/passwd в текущата ви работна директория и променете разделителя на копирания файл
+//от ":", на "?"
+
+#include <fcntl.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+main (int argc, char* argv[]){
+        int fd1, fd2;
+        char c;        
+        ssize_t read_size;     
+        
+        if (argc != 2){
+                write(2,"wrong number of arguments!\n", 30);
+                exit(1);
+        }
+
+        if ( (fd1 = open(argv[1], O_RDONLY)) == -1 ){
+                write(2, "Operation open failed!", 27);
+                exit(1);
+        }
+
+        if ( (fd2 = open("my_new_file", O_CREAT|O_WRONLY|O_TRUNC)) == -1 ){
+                write(2, "Operation open failed!", 27);
+
+                exit(1);
+        }
+
+        while( ( read_size=read(fd1, &c, 1) ) > 0 ){
+                
+                if(c == ':')
+		{
+                        c='?';
+                }
+                if ( write(fd2, &c, 1) != read_size ){
+                        write(2, "Error while writing occured!", 28);
+                        exit(1);
+                }
+        }
+        close(fd1);
+        close(fd2);
+}

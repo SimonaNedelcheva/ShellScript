@@ -1,0 +1,102 @@
+﻿#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+
+int main(int argc, char** argv) {
+	int fd1, fd2,
+	i = 1,
+	isFile = 0,
+	isDir = 0,
+	isMissing = 0;
+
+	char buffer[4096], copyFileName[128];
+	char* fileName;
+	char* dirName;
+	ssize_t readSize;
+	struct stat fileOrDirectory;
+
+	if (argc < 3) {
+		printf("%s", "Insufficient number of arguments passed.");
+		return -1;
+		}
+
+	stat(argv[argc - 1], &fileOrDirectory);
+	if (S_ISREG(fileOrDirectory.st_mode)) {
+		isFile = 1;
+	} else if (S_ISDIR(fileOrDirectory.st_mode)) {
+		isDir = 1;
+	} else {
+		isMissing = 1;
+		}
+
+	if (argc > 3 && !isDir) {
+		printf("`%s` %s", argv[argc - 1], "is not a directory");
+		return -1;
+	}
+
+	if (argc == 3 && !isDir) {
+		if ((fd1 = open(argv[1], O_RDONLY)) ==-1 ) 
+		{
+			printf("%s %s %s", "File ", argv[1], " cannot be opened for reading.");
+			return -1;
+		}
+
+		if ((fd2 = open(argv[2], O_CREAT|O_RDWR|O_TRUNC)) == -1 ) 
+		{
+			printf("%s %s %s", "File ", argv[2], " cannot be opened for writing.");
+			return -1;
+		}
+
+		while ((readSize = read(fd1, &buffer, sizeof(buffer)))>0 ) 
+		{
+			if (write(fd2, buffer, readSize) != readSize) {
+			printf("%s", "Error in writing into file.");
+			return -1;
+	}
+	}
+
+	close(fd2);
+	close(fd1);
+} else { 
+	dirName = argv[argc - 1];
+
+	while (i < argc - 1) 
+	{
+		fileName = argv[i];
+
+		strcpy(copyFileName, dirName);
+		strcat(copyFileName, "/");
+		strcat(copyFileName, fileName);
+
+if ((fd1 = open(fileName, O_RDONLY)) == -1 ) 
+{
+	printf("%s %s %s", "File ", fileName, " cannot be opened for reading.");
+	return -1;
+}
+
+if ((fd2 = open(copyFileName, O_CREAT|O_RDWR|O_TRUNC))== -1 ) 
+{
+	printf("%s %s %s", "File ", copyFileName, " cannot be opened for writing.");
+	return -1;
+}
+
+while ((readSize = read(fd1, &buffer, sizeof(buffer))) > 0 ) 
+{
+	if (write(fd2, buffer, readSize) != readSize) 
+	{
+		printf("%s", "Error in writing into file.");
+		return -1;
+	}
+}
+
+close(fd2);
+close(fd1);
+i++;
+}
+}
+
+return 0;
+}

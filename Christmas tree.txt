@@ -1,0 +1,27 @@
+﻿i=-1 
+j=0 
+echo "Enter Rows and Year" 
+read rows year 
+while [ $i -lt $rows ] 
+do 
+        for((j=-1;j<=$rows-$i;j++)) 
+        do 
+                echo -n " " 
+        done 
+        for((j=0;++j<2*$i;)) 
+        do 
+        echo -ne "\e[32m*" 
+done 
+        i=$(($i+1)) 
+        echo " " 
+done 
+for((j=2;j<=rows;j++)) 
+do 
+        echo -n " " 
+done 
+echo -e "\e[33m****" 
+for((j=4;j<=rows; j++)) 
+        do 
+        echo -n " " 
+done 
+echo -e "\e[97mЧ\e[92mН\e[91mГ \e[0m$year" 

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+DATE=$(date +"%y.%m.%d")
+tag="001"
+current_tag=$DATE.$tag
+
+if [ -e r.sh ]
+then 
+	last=$(tail -1 r.sh)
+	last_date=$(echo $last | cut -d "." -f "-3")
+	last_tag=$(echo $last | cut -d "." -f "4-")
+
+	if [ $DATE == $last_date ] 
+	then 
+		tag=$(printf "%03d" $((10#$last_tag+1)))
+	fi
+
+	current_tag=$DATE.$tag
+fi	
+
+echo "$current_tag" 
+echo "$current_tag" > r.sh
