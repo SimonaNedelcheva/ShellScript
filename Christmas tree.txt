@@ -1,4 +1,6 @@
-﻿i=-1 
+﻿#!/bin/bash
+
+i=-1 
 j=0 
 echo "Enter Rows and Year" 
 read rows year 
